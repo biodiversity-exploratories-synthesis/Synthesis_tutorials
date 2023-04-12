@@ -1,0 +1,6 @@
+category;lme4;nlmer
+fit the model;lmer();lme()
+fit a random intercept and slope model;`lmer(dist ~ age + (1 | Subject),  data=dat)` ;`lme(dist ~ age,  random = ~ age | Subject,  data=dat)` 
+fit a hierarchical model;`lmer(pixel ~ day + (day | Dog) + (1 | Side:Dog),  data=pixel.df)` ;`pixel.lme.1 <- lme(pixel ~ day,  random = list(Dog = ~ day ,  Side = ~ 1) ,  data=pixel.df)` 
+sjPlot works;fully;partly
+LmerTest works;fully;not

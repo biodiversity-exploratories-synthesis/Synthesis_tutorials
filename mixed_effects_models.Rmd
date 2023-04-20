@@ -114,7 +114,7 @@ machines.lme.2 <- lme(score ~ Machine, random = ~ 1 | Worker/Machine, data=Machi
 # Checking Assumptions
 It is crucial to check the model assumptions after fitting. Mixed effects model assumptions concern the error terms $\epsilon$ and the random effects $b_i$.
 
-Assumptions on error terms : The residuals within groups should be i.i.d. normally distributed, with mean 0 and a common variance, and they should be independent of the random effects. To check this, we use the "raw" residuals within groups = The differences between the observed and fitted values within groups. (use the function `residuals()``)
+Assumptions on **error terms** : The residuals within groups should be i.i.d. normally distributed, with mean 0 and a common variance, and they should be independent of the random effects. To check this, we use the "raw" residuals within groups = The differences between the observed and fitted values within groups. (use the function `residuals()``)
 
 Assumptions on random effects : Random terms should be normally distributed with mean == 0 and same variance, and they should be independent across groups. Get the predictions of random effects with `ranef()`
 
@@ -147,7 +147,8 @@ abline(h = 0, lty="dotted")
 ```
 
 ## Check Assumptions on Error terms within groups
-Plot residuals per group (per random effect group)
+
+Plot **residuals per group** (per random effect group)
 ```{r}
 # is the mean == 0 and variance equal?
 boxplot(residuals(Mlme1) ~ RIKZ$Beach, ylab="Residuals")
@@ -156,18 +157,18 @@ abline(h = 0, lty = "dotted")
 # ideal case : all means are at 0 and the variance is the same for each group.
 ```
 
-Additional : Plot residuals against predicted values per random effect group.
+*Additional* : Plot residuals against predicted values per random effect group.
 ```{r}
 plot(Mlme1, resid(.) ~ fitted(.) | Beach, grid = FALSE, abline = 0, lty = "dotted")
 # ideal case : no pattern of the points nor the variance of the points.
 ```
 
-Additional for hierarchical models (random intercept and slope): Plot residuals against each continuous explanatory variable per random effect combination.
+*Additional* for hierarchical models (random intercept and slope): Plot residuals against each continuous explanatory variable per random effect combination.
 ```{r}
 #TODO see MEM script ex. 3
 ```
 
-QQPlot of the residuals across groups and within group.
+QQPlot of the **residuals across groups and within group**.
 ```{r}
 # normality of residuals across groups
 qqPlot(resid(Mlme1), dist = "norm", mean = mean(resid(Mlme1)), sd = sd(resid(Mlme1)),
@@ -184,12 +185,13 @@ qqPlot(resid(Mlme1)[RIKZ$Beach == 1], dist = "norm", mean = mean(resid(Mlme1)), 
 qqPlot(resid(Mlme1)[RIKZ$Beach == 2], dist = "norm", mean = mean(resid(Mlme1)), sd = sd(resid(Mlme1)),
          xlab = "Theoretical quantiles", ylab = "Empirical quantiles",
          main = "Q-Q plot of residuals")
-#  continue for each group
+#  continue for each group in the random term
 ```
 
 
 ## Check Assumptions on Random terms
-QQPlot of random intercepts on each level (if more than 1 random effect, see example below)
+
+QQPlot of random intercepts on each level (if you have more than 1 random effect, see example below).
 ```{r}
 # Do the levels of the given random effect come from the same normal distribution?
 qqPlot(ranef(Mlme1,level=1)[,1], dist = "norm",
@@ -204,7 +206,7 @@ qqPlot(ranef(Mlme1,level=1)[,1], dist = "norm",
 #          main = "Q-Q plot of across-group residuals")
 ```
 
-Additional if >1 random effect : Plot random intercept on each level (TODO).
+*Additional* if you have >1 random effect : Plot random intercept on each level (TODO).
 ```{r, eval = F, echo = F}
 #TODO
 # mean == 0 and equal variance

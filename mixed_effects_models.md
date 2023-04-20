@@ -39,11 +39,6 @@ library(car) # for qqPlot function
 library(emmeans) # copute contrats for multilevel factors
 library(ggeffects) # produce nice marginal plots
 library(sjPlot) # help with visualisations
-```
-
-    ## Learn more about sjPlot with 'browseVignettes("sjPlot")'.
-
-``` r
 library(glmmTMB) # required by sjPlot
 
 # AED is the package accompanying the Book from Zuur et al.
@@ -131,8 +126,8 @@ anova(fm1, type = "marginal")
 
     ## Marginal Analysis of Variance Table with Satterthwaite's method
     ##      Sum Sq Mean Sq NumDF  DenDF  F value Pr(>F)    
-    ## Days 156623  156623     1 159.04 161.6478 <2e-16 ***
-    ## geno    857     429     2 161.66   0.4424 0.6433    
+    ## Days 161219  161219     1 159.08 166.7581 <2e-16 ***
+    ## geno    818     409     2 161.92   0.4229 0.6558    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -189,7 +184,7 @@ It is crucial to check the model assumptions after fitting. Mixed
 effects model assumptions concern the error terms $\epsilon$ and the
 random effects $b_i$.
 
-Assumptions on error terms : The residuals within groups should be
+Assumptions on **error terms** : The residuals within groups should be
 i.i.d. normally distributed, with mean 0 and a common variance, and they
 should be independent of the random effects. To check this, we use the
 “raw” residuals within groups = The differences between the observed and
@@ -247,7 +242,7 @@ abline(h = 0, lty="dotted")
 
 ## Check Assumptions on Error terms within groups
 
-Plot residuals per group (per random effect group)
+Plot **residuals per group** (per random effect group)
 
 ``` r
 # is the mean == 0 and variance equal?
@@ -262,7 +257,7 @@ abline(h = 0, lty = "dotted")
 # ideal case : all means are at 0 and the variance is the same for each group.
 ```
 
-Additional : Plot residuals against predicted values per random effect
+*Additional* : Plot residuals against predicted values per random effect
 group.
 
 ``` r
@@ -275,7 +270,7 @@ plot(Mlme1, resid(.) ~ fitted(.) | Beach, grid = FALSE, abline = 0, lty = "dotte
 # ideal case : no pattern of the points nor the variance of the points.
 ```
 
-Additional for hierarchical models (random intercept and slope): Plot
+*Additional* for hierarchical models (random intercept and slope): Plot
 residuals against each continuous explanatory variable per random effect
 combination.
 
@@ -283,7 +278,7 @@ combination.
 #TODO see MEM script ex. 3
 ```
 
-QQPlot of the residuals across groups and within group.
+QQPlot of the **residuals across groups and within group**.
 
 ``` r
 # normality of residuals across groups
@@ -325,13 +320,13 @@ qqPlot(resid(Mlme1)[RIKZ$Beach == 2], dist = "norm", mean = mean(resid(Mlme1)), 
     ## 4 3
 
 ``` r
-#  continue for each group
+#  continue for each group in the random term
 ```
 
 ## Check Assumptions on Random terms
 
-QQPlot of random intercepts on each level (if more than 1 random effect,
-see example below)
+QQPlot of random intercepts on each level (if you have more than 1
+random effect, see example below).
 
 ``` r
 # Do the levels of the given random effect come from the same normal distribution?
@@ -353,8 +348,8 @@ qqPlot(ranef(Mlme1,level=1)[,1], dist = "norm",
 #          main = "Q-Q plot of across-group residuals")
 ```
 
-Additional if \>1 random effect : Plot random intercept on each level
-(TODO).
+*Additional* if you have \>1 random effect : Plot random intercept on
+each level (TODO).
 
 ## Minimal example
 

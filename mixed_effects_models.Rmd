@@ -395,22 +395,39 @@ ggpredict(machines.lme.1, c("Machine")) |> plot()
 
 
 # Plotting
-ggeffects package : 
+
+ggeffects package: ...will add text... 
 
 
-From R buddy : **Abiel** *: was investigating the use of the ggeffects package for visualisation of mixed model results. He spent quite some time investigating this, and therefore wanted to share with us, as many of us are using mixed effects models.
+## Note on different packages
+
+A colleague in our lab was investigating the use of the ggeffects package for visualisation of mixed model results. He spent quite some time investigating this, and therefore wanted to share with us, as many of us are using mixed effects models.
 While the effects package does what it should, it uses gridplots for visualisation. These plots are a bit more limited in communicating the results as not so well thought-through/ designed as the ggplots. Alternatively, there was the remef package, which was not on CRAN.
 There is a new package, ggeffects, which can visualise the effects package predictions in a ggplot. But there are 3 different functions in this package for visualisation, which differ in the handling of factors :
-        ◦ ggpredict() uses analogous theory to the predict() function in base R. For predictions, it uses the first level of each factor.
-        ◦ ggemmeans() uses analogous theory to the emmeans package, and takes average of factor levels
-        ◦ ggeffects() uses analogous theory to the effects package and takes weighted averages of the factor levels.
-Abiel’s choice is the ggeffects package, as it relies on the effect package philosophy which seems a good choice to him, and is what we currently understand best.
-We were all very happy about this informations, and thought about writing them up in an Rmarkdown to share with others. If we want, we can take this to the next session.*
 
+- ggpredict() uses analogous theory to the predict() function in base R. For predictions, it uses the **first level of each factor**.
+- ggemmeans() uses analogous theory to the emmeans package, and takes average of factor levels
+- ggeffects() uses analogous theory to the effects package and takes weighted averages of the factor levels.
+
+Our colleague's choice is the `ggeffects` package, as it relies on the effect package philosophy which seems a good choice to him, and is what we currently understand best.
+
+
+
+## Plotting results with ggeffects
 
 ```{r}
 ggpredict(machines.lme.1, c("Machine")) |> plot()
+# adding data points
+ggpredict(machines.lme.1, c("Machine")) |> plot(add.data = T)
 ```
+
+Plotting more than one effect
+```{r}
+ggpredict(Mlme2, c("NAP", "Exposure")) |> plot()
+ggpredict(Mlme2, c("NAP", "Exposure")) |> plot(add.data = T)
+```
+
+
 
 With the `sjPlot` package, interactions can be plotted easily as well: 
 ```{r}

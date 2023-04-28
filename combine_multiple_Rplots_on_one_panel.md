@@ -15,6 +15,8 @@ This does not mean that R base can not do the job! R base is so
 versatile, just needs some special attention to the details. Below you
 find example code.
 
+# Panel plots in R base
+
 ``` r
 # use par() to arrange multiple plots together. Here, it is 4 plots (2 rows and 2 columns)
 par(mfrow = c(2, 2)) 
@@ -35,3 +37,69 @@ mtext("D", 2, adj=1, line=2, las = 1, padj = -4, font = 2)
 ```
 
 ![](combine_multiple_Rplots_on_one_panel_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+
+Adjusting the size of the labels.
+
+``` r
+par(mfrow = c(2, 2)) 
+
+# labels in italics with font = 4
+plot(rnorm(10), rnorm(10), main = "labels in italic font")
+mtext("A", 2, adj=1, line=2, las = 1, padj = -4, font = 4)
+
+# labels not bold with font = 3
+plot(rnorm(10), rnorm(10), main = "labels not bold")
+mtext("B", 2, adj=1, line=2, las = 1, padj = -4, font = 3)
+
+# changing the label size with cex = 4
+# additionally, you might have to adjust the horizontal (adj) and vertical (padj) parameters : 
+#  e.g. adj = 0, padj = -1
+plot(rnorm(10), rnorm(10), main = "large label")
+mtext("C", 2, adj = 0, line = 2, las = 1, padj = -1, font = 2, cex = 4)
+
+# medium size labels
+plot(rnorm(10), rnorm(10), main = "medium label")
+mtext("D", 2, adj = 0, line = 2, las = 1, padj = -2, font = 2, cex = 2)
+```
+
+![](combine_multiple_Rplots_on_one_panel_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+``` r
+dev.off() # re-set previous graphic settings to default
+```
+
+    ## null device 
+    ##           1
+
+# Panel plots with ggplot2 and cowplot
+
+load requirements
+
+``` r
+library(ggplot2)
+library(cowplot)
+```
+
+Basic panel plot with ggplot and cowplot
+
+``` r
+dat <- data.frame("vertical" = rnorm(10), "horizontal" = rnorm(10))
+a <- ggplot(dat, aes(x = horizontal, y = vertical)) +
+  geom_point()
+b <- ggplot(dat, aes(x = horizontal, y = vertical)) +
+  geom_point()
+
+plot_grid(a, b, nrow = 2, labels = c("A", "B"))
+```
+
+![](combine_multiple_Rplots_on_one_panel_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+Adjusting the label size
+
+``` r
+# you can adjust the label size with the label_size parameter
+#  e.g. setting label_size = 20
+plot_grid(a, b, nrow = 2, labels = c("A", "B"), label_size = 20)
+```
+
+![](combine_multiple_Rplots_on_one_panel_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->

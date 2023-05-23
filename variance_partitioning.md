@@ -160,14 +160,16 @@ anova table, which correctly estimates the variance explained by each
 individual variable if uncorrelated, but underestimates the variance
 explained if they share explanatory power.
 
-Quoting directly from ChatGPT : \> In a multiple regression setting with
-correlated predictors, the individual Sum Sq values do not accurately
-reflect the unique variance explained by each predictor variable. The
-issue arises because the contribution of each predictor to the overall
-variance explained depends on the presence of other predictors in the
-model. When predictors are correlated, they share some common variance,
-and the individual Sum Sq values do not separate out the unique variance
-attributed to each predictor.
+Quoting directly from ChatGPT :
+
+> In a multiple regression setting with correlated predictors, the
+> individual Sum Sq values do not accurately reflect the unique variance
+> explained by each predictor variable. The issue arises because the
+> contribution of each predictor to the overall variance explained
+> depends on the presence of other predictors in the model. When
+> predictors are correlated, they share some common variance, and the
+> individual Sum Sq values do not separate out the unique variance
+> attributed to each predictor.
 
 ## Calculation by hand
 

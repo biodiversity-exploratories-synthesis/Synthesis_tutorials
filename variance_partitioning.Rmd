@@ -1,0 +1,112 @@
+---
+title: "Variance partitioning"
+author: "N. V. Schenk"
+date: "2023-05-23"
+output: github_document
+---
+
+**Aim**: minimal script describing procedure for variance partitioning in univariate linear models.
+
+**Requirements**
+```{r}
+library(lattice)
+library(vegan)
+```
+
+
+```{r}
+ozone <- lattice::environmental
+head(ozone)
+
+plot(ozone)
+# neg corr between temperature and wind, maybe ozone and wind
+# pos corr between ozone and temperature
+
+
+mod1 <- lm(ozone ~ radiation + temperature + wind, data = ozone)
+summary(mod1)
+# ozone increases with increasing radiation and increasing temperature
+# ozone decreases with increasing wind
+anova(mod1)
+# Sum Sq column : sum of squared deviations for each variable included in model
+# temp is highest, then radiation, then wind
+#TODO SS = var expl?
+
+# plot(mod1) #The curvature in the residuals plot is a little concerning, but let's proceed
+
+
+#For the linear model we add the variables as so: varpart(Y, X1, X2, X3)
+varp.oz <- vegan::varpart(ozone$ozone, ozone$radiation, ozone$temperature,
+ozone$wind)
+plot(varp.oz, bg = c("red", "yellow", "blue"), Xnames = c("Radiation",
+"Temperature", "Wind"))
+```
+
+
+# ANOVA table does not show shared variances
+
+We can compare the output of the anova table with the variance partitioning by the vegan::varpart() function. 
+
+Reading from the anova table : that the percent variance explained by a predictor is the sum of squared distances from the mean (Sum Sq) divided by the total amount of variance.
+```{r}
+# CALCULATING THE VARIANCE EXPLAINED BY HAND
+total_sum_sq <- 14780 + 47378 + 11680 + 47964
+
+# RADIATION
+14780 / total_sum_sq # 0.121
+# reading values from plot : 
+0.02 + 0.05 + 0.05
+
+# TEMPERATURE
+47378 / total_sum_sq # 0.3889
+# reading values from plot: 
+0.16 + 0.05 + 0.05 + 0.23 # 0.49
+
+# WIND
+11680 / total_sum_sq # 0.095
+# reading values from plot
+0.09 + 0.23 + 0.05 # 0.37
+```
+
+Temperature and wind are highly correlated. Therefore, a large amount of variance is shared among them. This blurs the picture we get from the anova table, which correctly estimates the  variance explained by each individual variable if uncorrelated, but underestimates the variance explained if they share explanatory power.
+
+Quoting directly from ChatGPT : 
+> In a multiple regression setting with correlated predictors, the individual Sum Sq values do not accurately reflect the unique variance explained by each predictor variable. The issue arises because the contribution of each predictor to the overall variance explained depends on the presence of other predictors in the model. When predictors are correlated, they share some common variance, and the individual Sum Sq values do not separate out the unique variance attributed to each predictor.
+
+
+## Calculation by hand
+
+To get a better estimation, we would need to run individual models and observe their anova tables: 
+```{r}
+# Temperature as example : 
+mod2 <- lm(ozone ~ temperature, data = ozone)
+anova(mod2) # SS = 59434
+mod2 <- lm(ozone ~ wind + temperature, data = ozone)
+anova(mod2) # SS = 25092
+mod2 <- lm(ozone ~ radiation + temperature, data = ozone)
+anova(mod2) # SS = 47378
+mod2 <- lm(ozone ~ radiation + wind + temperature, data = ozone)
+anova(mod2) # SS = 19032
+
+59434 / total_sum_sq # 0.488
+# from vegan output : 
+0.16 + 0.23 + 0.05 + 0.05 # 0.49
+
+# variance not shared with radiation : 
+47378 / total_sum_sq # 0.3889756
+0.16 + 0.23 # reading from plot : 0.39
+# variance not shared with wind : 
+25092 / total_sum_sq # 0.2060065
+0.16 + 0.05 # 0.21
+# variance not shared with radiation and wind
+19032 / total_sum_sq # 0.1562536
+# 0.16
+
+```
+By combining the individual pieces of information, we can calculate the variance explained of all remainig combinations of shared/ unshared variance.
+
+We recommend to calculate the variance partitioning by hand for practice purposes - it's just way easier to understand the procedure if you have done it by hand at least once.
+
+
+# References
+- Example and code based on [this course](https://sites.ualberta.ca/~ahamann/teaching/renr690/labs/Lab9e.pdf)

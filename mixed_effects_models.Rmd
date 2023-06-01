@@ -26,7 +26,7 @@ library(car) # for qqPlot function
 library(emmeans) # copute contrats for multilevel factors
 library(ggeffects) # produce nice marginal plots
 library(sjPlot) # help with visualisations
-library(glmmTMB) # required by sjPlot
+# library(glmmTMB) # required by sjPlot, but takes long time to install (skipped here)
 
 # AED is the package accompanying the Book from Zuur et al.
 # install.packages("remotes")
@@ -246,7 +246,8 @@ sjPlot::plot_model(Mlme1, type = "diag") # (1) QQplot (2) similar to QQPlot (3) 
 
 # Plotting the random effects (only works for models from the lme4 package)
 # Do the residuals within random effect levels have the same variance and mean == 0?
-sjPlot::plot_model(Mlme1_lme4, type = "re")
+# sjPlot::plot_model(Mlme1_lme4, type = "re")
+# please not that for the above plot, the package glmmTMB needs to be installed
 ```
 
 
@@ -444,6 +445,7 @@ On the other hand, when type = "random", the marginal effects are calculated usi
 
 Plotting more than one effect
 ```{r}
+Mlme2 <- lme(Richness ~ NAP * Exposure, random = ~ 1 | Beach, data = RIKZ)
 ggpredict(Mlme2, c("NAP", "Exposure")) |> plot()
 ggpredict(Mlme2, c("NAP", "Exposure")) |> plot(add.data = T)
 ```

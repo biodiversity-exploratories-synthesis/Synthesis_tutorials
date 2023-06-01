@@ -39,7 +39,7 @@ library(car) # for qqPlot function
 library(emmeans) # copute contrats for multilevel factors
 library(ggeffects) # produce nice marginal plots
 library(sjPlot) # help with visualisations
-library(glmmTMB) # required by sjPlot
+# library(glmmTMB) # required by sjPlot, but takes long time to install (skipped here)
 
 # AED is the package accompanying the Book from Zuur et al.
 # install.packages("remotes")
@@ -126,8 +126,8 @@ anova(fm1, type = "marginal")
 
     ## Marginal Analysis of Variance Table with Satterthwaite's method
     ##      Sum Sq Mean Sq NumDF  DenDF  F value Pr(>F)    
-    ## Days 161219  161219     1 159.08 166.7581 <2e-16 ***
-    ## geno    818     409     2 161.92   0.4229 0.6558    
+    ## Days 162397  162397     1 159.02 167.3343 <2e-16 ***
+    ## geno    350     175     2 160.53   0.1801 0.8353    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -409,10 +409,9 @@ sjPlot::plot_model(Mlme1, type = "diag") # (1) QQplot (2) similar to QQPlot (3) 
 ``` r
 # Plotting the random effects (only works for models from the lme4 package)
 # Do the residuals within random effect levels have the same variance and mean == 0?
-sjPlot::plot_model(Mlme1_lme4, type = "re")
+# sjPlot::plot_model(Mlme1_lme4, type = "re")
+# please not that for the above plot, the package glmmTMB needs to be installed
 ```
-
-![](mixed_effects_models_files/figure-gfm/unnamed-chunk-14-6.png)<!-- -->
 
 <!-- ## TODO CLEAN Error term assumptions -->
 <!-- check constant variance (homoscedasicity) and mean = 0 across groups (across groups within the random effects) -->
@@ -530,6 +529,9 @@ which machine differs from which machine?
 ``` r
 library(nlme)
 library(emmeans)
+library(ggplot2)
+library(ggeffects)
+
 data("Machines") # from the nlme package
 machines.lme.1 <- lme(score ~ Machine, random = ~ 1 | Worker, data = Machines)
 emmeans(machines.lme.1, pairwise ~ Machine, adjust="bonferroni")
@@ -554,7 +556,6 @@ emmeans(machines.lme.1, pairwise ~ Machine, adjust="bonferroni")
     ## P value adjustment: bonferroni method for 3 tests
 
 ``` r
-library(ggeffects)
 ggpredict(machines.lme.1, c("Machine")) |> plot()
 ```
 
@@ -562,9 +563,11 @@ ggpredict(machines.lme.1, c("Machine")) |> plot()
 
 # Plotting
 
-ggeffects package :
+ggeffects package: …will add text…
 
-From R buddy : **Abiel** *: was investigating the use of the ggeffects
+## Note on different packages
+
+A colleague in our lab was investigating the use of the ggeffects
 package for visualisation of mixed model results. He spent quite some
 time investigating this, and therefore wanted to share with us, as many
 of us are using mixed effects models. While the effects package does
@@ -574,22 +577,88 @@ thought-through/ designed as the ggplots. Alternatively, there was the
 remef package, which was not on CRAN. There is a new package, ggeffects,
 which can visualise the effects package predictions in a ggplot. But
 there are 3 different functions in this package for visualisation, which
-differ in the handling of factors : ◦ ggpredict() uses analogous theory
-to the predict() function in base R. For predictions, it uses the first
-level of each factor. ◦ ggemmeans() uses analogous theory to the emmeans
-package, and takes average of factor levels ◦ ggeffects() uses analogous
-theory to the effects package and takes weighted averages of the factor
-levels. Abiel’s choice is the ggeffects package, as it relies on the
+differ in the handling of factors :
+
+- ggpredict() uses analogous theory to the predict() function in base R.
+  For predictions, it uses the **first level of each factor**.
+- ggemmeans() uses analogous theory to the emmeans package, and takes
+  average of factor levels
+- ggeffects() uses analogous theory to the effects package and takes
+  weighted averages of the factor levels.
+
+Our colleague’s choice is the `ggeffects` package, as it relies on the
 effect package philosophy which seems a good choice to him, and is what
-we currently understand best. We were all very happy about this
-informations, and thought about writing them up in an Rmarkdown to share
-with others. If we want, we can take this to the next session.*
+we currently understand best.
+
+## Plotting results with ggeffects
 
 ``` r
 ggpredict(machines.lme.1, c("Machine")) |> plot()
 ```
 
 ![](mixed_effects_models_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+# adding data points
+ggpredict(machines.lme.1, c("Machine")) |> plot(add.data = T)
+```
+
+![](mixed_effects_models_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
+
+``` r
+# alternative way to code : 
+me.plotmachines1 <- ggpredict(machines.lme.1, c("Machine"))
+plot(me.plotmachines1)
+```
+
+![](mixed_effects_models_files/figure-gfm/unnamed-chunk-17-3.png)<!-- -->
+
+``` r
+# adding data points
+plot(me.plotmachines1, add.data = T)
+```
+
+![](mixed_effects_models_files/figure-gfm/unnamed-chunk-17-4.png)<!-- -->
+
+### note on marginal effects
+
+The type argument in the ggpredict() function of the ggeffects package
+determines whether the plotted marginal effects are fixed or random
+effects.
+
+When type = “fixed”, the marginal effects are calculated using the
+average values of all the random effects in the model, “excluding the
+additional variance caused by the random effect”. This means that the
+marginal effects represent the average effect of the predictor variable
+on the response variable, while holding all other variables constant at
+their mean values. In other words, the marginal effects reflect the
+effect of the predictor variable on the response variable in the
+population, assuming that all other variables are held constant at their
+mean values.
+
+On the other hand, when type = “random”, the marginal effects are
+calculated using the individual values of the random effects in the
+model. This means that the marginal effects represent the effect of the
+predictor variable on the response variable for each individual or
+subgroup in the data, taking into account the individual differences in
+the random effects. This can be useful when investigating the extent to
+which the effect of the predictor variable varies across different
+subgroups or individual cases in the data.
+
+Plotting more than one effect
+
+``` r
+Mlme2 <- lme(Richness ~ NAP * Exposure, random = ~ 1 | Beach, data = RIKZ)
+ggpredict(Mlme2, c("NAP", "Exposure")) |> plot()
+```
+
+![](mixed_effects_models_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+``` r
+ggpredict(Mlme2, c("NAP", "Exposure")) |> plot(add.data = T)
+```
+
+![](mixed_effects_models_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
 
 With the `sjPlot` package, interactions can be plotted easily as well:
 
@@ -638,11 +707,11 @@ summary(Mlme2)
 sjPlot::plot_model(Mlme2, type = "pred", terms = c("NAP", "Exposure"))
 ```
 
-![](mixed_effects_models_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](mixed_effects_models_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 # plot all interactions with type = "int"
 sjPlot::plot_model(Mlme2, type = "int", terms = c("NAP", "Exposure"))
 ```
 
-![](mixed_effects_models_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
+![](mixed_effects_models_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->

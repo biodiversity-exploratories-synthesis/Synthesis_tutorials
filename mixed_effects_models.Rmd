@@ -385,10 +385,12 @@ Aim : compare the levels of a factor pairwise. In the Machines example : which m
 ```{r}
 library(nlme)
 library(emmeans)
+library(ggplot2)
+library(ggeffects)
+
 data("Machines") # from the nlme package
 machines.lme.1 <- lme(score ~ Machine, random = ~ 1 | Worker, data = Machines)
 emmeans(machines.lme.1, pairwise ~ Machine, adjust="bonferroni")
-library(ggeffects)
 ggpredict(machines.lme.1, c("Machine")) |> plot()
 ```
 
@@ -412,14 +414,33 @@ There is a new package, ggeffects, which can visualise the effects package predi
 Our colleague's choice is the `ggeffects` package, as it relies on the effect package philosophy which seems a good choice to him, and is what we currently understand best.
 
 
-
 ## Plotting results with ggeffects
 
 ```{r}
 ggpredict(machines.lme.1, c("Machine")) |> plot()
 # adding data points
 ggpredict(machines.lme.1, c("Machine")) |> plot(add.data = T)
+
+
+# alternative way to code : 
+me.plotmachines1 <- ggpredict(machines.lme.1, c("Machine"))
+plot(me.plotmachines1)
+
+# adding data points
+plot(me.plotmachines1, add.data = T)
 ```
+
+
+
+### note on marginal effects
+The type argument in the ggpredict() function of the ggeffects package determines whether the plotted marginal effects are fixed or random effects.
+
+When type = "fixed", the marginal effects are calculated using the average values of all the random effects in the model, "excluding the additional variance caused by the random effect". This means that the marginal effects represent the average effect of the predictor variable on the response variable, while holding all other variables constant at their mean values. In other words, the marginal effects reflect the effect of the predictor variable on the response variable in the population, assuming that all other variables are held constant at their mean values.
+
+On the other hand, when type = "random", the marginal effects are calculated using the individual values of the random effects in the model. This means that the marginal effects represent the effect of the predictor variable on the response variable for each individual or subgroup in the data, taking into account the individual differences in the random effects. This can be useful when investigating the extent to which the effect of the predictor variable varies across different subgroups or individual cases in the data.
+
+
+
 
 Plotting more than one effect
 ```{r}
@@ -441,5 +462,8 @@ sjPlot::plot_model(Mlme2, type = "pred", terms = c("NAP", "Exposure"))
 # plot all interactions with type = "int"
 sjPlot::plot_model(Mlme2, type = "int", terms = c("NAP", "Exposure"))
 ```
+
+
+
 
 

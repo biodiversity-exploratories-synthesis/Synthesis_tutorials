@@ -408,14 +408,31 @@ A colleague in our lab was investigating the use of the ggeffects package for vi
 While the effects package does what it should, it uses gridplots for visualisation. These plots are a bit more limited in communicating the results as not so well thought-through/ designed as the ggplots. Alternatively, there was the remef package, which was not on CRAN.
 There is a new package, ggeffects, which can visualise the effects package predictions in a ggplot. But there are 3 different functions in this package for visualisation, which differ in the handling of factors :
 
-- ggpredict() uses analogous theory to the predict() function in base R. For predictions, it uses the **first level of each factor**.
-- ggemmeans() uses analogous theory to the emmeans package, and takes average of factor levels
+- ggpredict() uses analogous theory to the predict() function in base R. For predictions, it uses the **first level of each factor** = the reference level
+- ggemmeans() uses analogous theory to the emmeans package, and takes average of factor levels. The levels are averaged or, in other words "marginalised", therefore we speak about marginal effects here.
 - ggeffects() uses analogous theory to the effects package and takes weighted averages of the factor levels.
 
-Our colleague's choice is the `ggeffects` package, as it relies on the effect package philosophy which seems a good choice to him, and is what we currently understand best.
+Our colleague's choice is the `ggeffects` package, as it relies on the effect package philosophy which seems a good choice to him, and is what we currently understand best within our group.
 
 
-## Plotting results with ggeffects
+See the original documentation at the ggeffects package description : https://search.r-project.org/CRAN/refmans/ggeffects/html/ggpredict.html
+
+> ggpredict() calls predict(), while ggeffect() calls effects::Effect() and ggemmeans() calls emmeans::emmeans() to compute predicted values. Thus, effects returned by ggpredict() can be described as conditional effects (i.e. these are conditioned on certain (reference) levels of factors), while ggemmeans() and ggeffect() return marginal means, since the effects are "marginalized" (or "averaged") over the levels of factors (or values of character vectors). Therefore, ggpredict() and ggeffect() resp. ggemmeans() differ in how factors and character vectors are held constant: ggpredict() uses the reference level (or "lowest" value in case of character vectors), while ggeffect() and ggemmeans() compute a kind of "average" value, which represents the proportions of each factor's category. Use condition to set a specific level for factors in ggemmeans(), so factors are not averaged over their categories, but held constant at a given level. 
+
+Working out the difference between `ggeffects` and `ggpredict` : 
+```{r}
+pred_effects <- ggeffect(machines.lme.1, c("Machine"))
+pred_effects |> plot(add.data = T)
+
+pred_predict <- ggpredict(machines.lme.1, c("Machine"))
+pred_predict |> plot(add.data = T)
+```
+The predictions do slightly differ.
+
+
+## Plotting results with ggeffects package
+
+**Note** : here, the plots are created with the `ggpredict()` function, which is not the one recommended above. Just change the command to `ggeffect()` to use the recommendation.
 
 ```{r}
 ggpredict(machines.lme.1, c("Machine")) |> plot()
@@ -436,14 +453,12 @@ plot(me.plotmachines1, add.data = T)
 ### note on marginal effects
 The type argument in the ggpredict() function of the ggeffects package determines whether the plotted marginal effects are fixed or random effects.
 
-When type = "fixed", the marginal effects are calculated using the average values of all the random effects in the model, "excluding the additional variance caused by the random effect". This means that the marginal effects represent the average effect of the predictor variable on the response variable, while holding all other variables constant at their mean values. In other words, the marginal effects reflect the effect of the predictor variable on the response variable in the population, assuming that all other variables are held constant at their mean values.
+When type = "fixed", the marginal effects are calculated using the average values of all the random effects in the model, "excluding the additional variance caused by the random effect". This means that the marginal effects represent the average effect of the predictor variable on the response variable, while holding all other variables constant at their mean values. In other words, the marginal effects reflect the effect of the predictor variable on the response variable in the population, assuming that all other variables are held constant at their mean values (continuous) or reference level (factors).
 
 On the other hand, when type = "random", the marginal effects are calculated using the individual values of the random effects in the model. This means that the marginal effects represent the effect of the predictor variable on the response variable for each individual or subgroup in the data, taking into account the individual differences in the random effects. This can be useful when investigating the extent to which the effect of the predictor variable varies across different subgroups or individual cases in the data.
 
 
-
-
-Plotting more than one effect
+Plotting more than one effect (interactions)
 ```{r}
 Mlme2 <- lme(Richness ~ NAP * Exposure, random = ~ 1 | Beach, data = RIKZ)
 ggpredict(Mlme2, c("NAP", "Exposure")) |> plot()

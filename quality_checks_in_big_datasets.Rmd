@@ -9,6 +9,18 @@ output: github_document
 
 This is a collection of quality checks which can be used for big datasets, as e.g. for synthesis datset assembly.
 
+## Quality checks in R
+
+Basic testing can be done by checking the number of rows etc. by hand in the console. Written tests are to be preferred because those tests are reproducible. Ideally include the expected value either as comment or as test, as shown in the example below:
+
+Compare observed vs. expected
+```{r}
+nrow(iris) == 150 # if observed == expected : T, if unexpected : FALSE
+```
+
+Use automated tests as implemented in RStudio
+
+
 ## Quality checks
 
 - after each data wrangling step, check carefully if the number of below items corresponds to the expected number : 

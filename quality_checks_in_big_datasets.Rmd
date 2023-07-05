@@ -1,13 +1,16 @@
 ---
 title: "Quality checks in big datasets"
-author: "N. V. Schenk"
+author: "Synthesis Team"
 date: "2023-06-15"
 output: github_document
 ---
 
 ## Aim
 
-This is a collection of quality checks which can be used for big datasets, as e.g. for synthesis datset assembly.
+This is a collection of dataset quality checks which can be used for big datasets, as e.g. for synthesis datset assembly. It is aimed at persons creating a large dataset.
+
+If you search for instructions about how to work with and handle the synthesis datasets, please consider the Synthesis dataset manual.
+
 
 ## Quality checks in R
 
@@ -18,32 +21,33 @@ Compare observed vs. expected
 nrow(iris) == 150 # if observed == expected : T, if unexpected : FALSE
 ```
 
-Use automated tests as implemented in RStudio
+Automated tests are be implemented in RStudio --> useful tool.
 
 
 ## Quality checks
 
-- after each data wrangling step, check carefully if the number of below items corresponds to the expected number : 
+- expected number present?
     - number of plots
     - number of NA values
-- column class (character, numeric, factor). Check if class is as expected.
+    - number of zeros
+    - duplicated entries `duplicated()`
+    - non-finite values
+- column class (character, numeric, factor) as expected?
     - character : only for comments (long text)
     - factor : categories of measurements, plot names. Try to use factors wherever possible and avoid characters.
     - numeric : all kinds of numbers
-- factors (categorical variables) :
-    - check levels
+- check levels of factors
 - correlations : 
-    - assembled variables are (often) correlated with the raw variables
+    - assembled variables correlated with the source/raw variables?
     - indicators of the same process in different years correlated?
-- duplicates : use `unique()` and `duplicated()` functions
-- non-finite values : check if any present
-- correct, document and feedback any errors found in used material --> let creators correct errors in the original version.
+
+- in case errors are found : correct, document and feedback to creators (so they can correct errors in the original/ source version).
 
 
 ## Synthesis datasets
 
-- number of plots >= 100
-- select plots : grasslands (AEG) and/ or forests (AEF)
+- number of plots the same as reported in metadata of the source dataset?
+- select plots : grasslands (AEG) and/ or forests (AEW or AEF)
 - check plot encoding : the two most often used versions of plot names are : "AEG1" (official name) and "AEG01" (often used)
     - The "AEG01" is an often used alternative because it allows better sorting in Excel (AEG01, AEG02, .. versus AEG1, AEG11, ...)
 - before aggregating values from several vectors : 
@@ -55,9 +59,4 @@ Use automated tests as implemented in RStudio
 - Versions : always indicate the version of the BExIS dataset you are working with (if the original name of the data folder is kept (recommended), the version is visible from the name)
 - years : check if all plots are present in all years
     --> if checking the number of plots, check per year separately, because a missing plot in one of the years would not be detected
-
-## Outlook
-
-Collection of issues by Data Scientist meeting 2021. [added in July]
-
 

@@ -1,12 +1,15 @@
 Quality checks in big datasets
 ================
-N. V. Schenk
+Synthesis Team
 2023-06-15
 
 ## Aim
 
-This is a collection of quality checks which can be used for big
-datasets, as e.g. for synthesis datset assembly.
+This is a collection of dataset quality checks which can be used for big
+datasets, as e.g. for synthesis datset assembly. It is aimed at persons
+creating a large dataset. If you search for instructions about how to
+work with and handle the synthesis datasets, please consider the
+Synthesis dataset manual.
 
 ## Quality checks in R
 
@@ -49,8 +52,9 @@ Use automated tests as implemented in RStudio
 
 ## Synthesis datasets
 
-- number of plots \>= 100
-- select plots : grasslands (AEG) and/ or forests (AEF)
+- number of plots the same as reported in metadata of the source
+  dataset?
+- select plots : grasslands (AEG) and/ or forests (AEW or AEF)
 - check plot encoding : the two most often used versions of plot names
   are : “AEG1” (official name) and “AEG01” (often used)
   - The “AEG01” is an often used alternative because it allows better

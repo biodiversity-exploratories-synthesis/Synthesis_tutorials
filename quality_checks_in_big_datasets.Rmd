@@ -26,6 +26,18 @@ Use automated tests as implemented in RStudio
 - after each data wrangling step, check carefully if the number of below items corresponds to the expected number : 
     - number of plots
     - number of NA values
+- column class (character, numeric, factor). Check if class is as expected.
+    - character : only for comments (long text)
+    - factor : categories of measurements, plot names. Try to use factors wherever possible and avoid characters.
+    - numeric : all kinds of numbers
+- factors (categorical variables) :
+    - check levels
+- correlations : 
+    - assembled variables are (often) correlated with the raw variables
+    - indicators of the same process in different years correlated?
+- duplicates : use `unique()` and `duplicated()` functions
+- non-finite values : check if any present
+- correct, document and feedback any errors found in used material --> let creators correct errors in the original version.
 
 
 ## Synthesis datasets
@@ -39,9 +51,13 @@ Use automated tests as implemented in RStudio
 - missing plots : 
     - sometimes, an aggregated value is calculated of two vectors x and y, e.g. the mean of two pH measures. If a plot is missing in only one of two vectors x and y, use the value of the non-missing vector to compute the aggregated value.
     - missing vs. zeros. Sometimes, missing values are reported as zeros. Evaluate if the NA and 0 values are reported correctly : missing (NA) values are true missing values (intented to measure, but measurement was not possible), where zeroes (0) are value which were measured, and the measurement result was zero (e.g. counted number of butterfly species, but no butterflies were there)
-
+    - **missing species** : a species can be completely missing from a plot --> keep in mind (and check with number of plots)
+- Versions : always indicate the version of the BExIS dataset you are working with (if the original name of the data folder is kept (recommended), the version is visible from the name)
+- years : check if all plots are present in all years
+    --> if checking the number of plots, check per year separately, because a missing plot in one of the years would not be detected
 
 ## Outlook
 
-Collection of issues by Data Scientist meeting 2021.
+Collection of issues by Data Scientist meeting 2021. [added in July]
+
 
